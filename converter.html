@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>掲示板HTMLコンバーター</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px G4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        #drop-area {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            color: #666;
+            margin-bottom: 20px;
+            transition: border-color 0.3s, background-color 0.3s;
+        }
+        #drop-area.highlight {
+            border-color: #3498db;
+            background-color: #ecf0f1;
+        }
+        #file-input {
+            display: none;
+        }
+        #preview-area {
+            display: none;
+        }
+        #download-btn {
+            display: inline-block;
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        #download-btn:hover {
+            background-color: #2980b9;
+        }
+        .status-message {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .status-message.success {
+            background-color: #dff0d8;
+            color: #3c763d;
+        }
+        .status-message.error {
+            background-color: #f2dede;
+            color: #a94442;
+        }
+        #preview-content {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-top: 10px;
+            max-height: 500px;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>掲示板HTMLコンバーター</h1>
+        <div id="drop-area">
+            <p>ここにHTMLファイルをドラッグ＆ドロップ<br>またはクリックしてファイルを選択</p>
+            <input type="file" id="file-input" accept=".html">
+        </div>
+
+        <div id="preview-area">
+            <h3>▼ 変換結果プレビュー</h3>
+            <a id="download-btn" href="#" download="output.html">HTMLファイルとして保存</a>
+            <div id="status-message"></div>
+            <div id="preview-content"></div>
+        </div>
+    </div>
+
+    <script>
+        const dropArea = document.getElementById('drop-area');
+        const fileInput = document.getElementById('file-input');
+        const previewArea = document.getElementById('preview-area');
+        const downloadBtn = document.getElementById('download-btn');
+        const statusMessage = document.getElementById('status-message');
+        const previewContent = document.getElementById('preview-content');
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) { e.preventDefault(); e.stopPropagation(); }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropArea.addEventListener(eventName, () => dropArea.classList.add('highlight'), false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, () => dropArea.classList.remove('highlight'), false);
+        });
+
+        dropArea.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+        dropArea.addEventListener('drop', (e) => handleFiles(e.dataTransfer.files), false);
+
+        function handleFiles(files) {
+            const file = files[0];
+            if (file && file.type === 'text/html') {
+                const reader = new FileReader();
+                reader.onload = (e) => { processHTML(e.target.result); };
+                reader.onerror = () => { updateStatus('ファイルの読み込みに失敗しました。', 'error'); };
+                reader.readAsText(file, 'UTF-8');
+            } else {
+                updateStatus('HTMLファイルを選択してください。', 'error');
+            }
+        }
+
+        function updateStatus(message, type) {
+            statusMessage.textContent = message;
+            statusMessage.className = `status-message ${type}`;
+        }
+        
+        // --- Body Parsers ---
+        function parseMainText(element) {
+            let textHtml = '';
+            if (!element) return textHtml;
+            element.childNodes.forEach(childNode => {
+                if (childNode.nodeType === Node.TEXT_NODE) {
+                    textHtml += childNode.textContent;
+                } else if (childNode.nodeType === Node.ELEMENT_NODE) {
+                    if (childNode.tagName === 'SPAN' && childNode.className.includes('cursor-pointer')) {
+                        textHtml += `<a href="#post-${childNode.textContent.replace('>>','')}" class="anchor-sent">${childNode.textContent}</a>`;
+                    } else if (childNode.tagName === 'SPAN' && childNode.className.includes('rounded-md')) {
+                        let diceClass = 'dice-normal';
+                        if (childNode.title.includes('ウマ娘')) diceClass = 'dice-uma';
+                        if (childNode.title.includes('レースダイス')) diceClass = 'dice-race';
+                        textHtml += `<span class="dice ${diceClass}">${childNode.textContent.trim().replace(/\s+/g, ' ')}</span> `;
+                    } else if (childNode.tagName === 'BR') {
+                        textHtml += '\n';
+                    }
+                }
+            });
+            return textHtml;
+        }
+
+        function parseCushion(element) {
+            const isExpanded = element.querySelector('svg[class*="lucide-eye-off"]');
+            if (isExpanded) {
+                const contentDiv = element.querySelector('div[class*="border-t"] > div.whitespace-pre-wrap');
+                const content = contentDiv ? contentDiv.innerHTML : '内容の取得に失敗しました';
+                return `<details class="cushion"><summary class="cushion-btn">▼ワンクッション（クリックで表示）</summary><div class="cushion-content">${content}</div></details>`;
+            } else {
+                return `<div class="cushion"><strong>【注意：ワンクッションあり（内容は表示できません）】</strong><br><small>ヒント：元の掲示板で「▼表示」ボタンを押して内容を表示させた状態でHTMLを保存し直すと、内容を変換できます。</small></div>`;
+            }
+        }
+
+        function parseExternalLink(element) {
+            const linkCard = element.querySelector('a.block');
+            if (linkCard) {
+                const url = linkCard.href;
+                const title = linkCard.querySelector('h4')?.textContent.trim() || url;
+                return `<p class="external-link"><a href="${url}" target="_blank" rel="noopener noreferrer">[リンク] ${title}</a></p>`;
+            }
+            return '';
+        }
+
+        function generateBodyHtml(postElement) {
+            let html = '';
+            const bodyContainer = postElement.querySelector('div.mb-4[class*="text-gray-700"]');
+            if (!bodyContainer) return '';
+
+            const complexBody = bodyContainer.querySelector('.space-y-4');
+
+            if (complexBody) {
+                complexBody.childNodes.forEach(node => {
+                    if (node.nodeType !== Node.ELEMENT_NODE) return;
+                    if (node.matches('div.whitespace-pre-wrap')) html += parseMainText(node);
+                    if (node.matches('div[class*="border-yellow-300"]')) html += parseCushion(node);
+                });
+            } else {
+                const mainTextDiv = bodyContainer.querySelector('.whitespace-pre-wrap');
+                if (mainTextDiv) html += parseMainText(mainTextDiv);
+            }
+
+            const linkDiv = postElement.querySelector('div.my-3');
+            if (linkDiv) html += parseExternalLink(linkDiv);
+
+            const imageDiv = postElement.querySelector('div.mb-4 > div.inline-block > img');
+            if (imageDiv) html += `<p class="post-image"><img src="${imageDiv.src}" alt="${imageDiv.alt}"></p>`;
+            
+            return html;
+        }
+        
+        // --- Main Process ---
+        function processHTML(htmlString) {
+            try {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(htmlString, 'text/html');
+                
+                const posts = Array.from(doc.querySelectorAll('.space-y-4 > div[id^="post-"]'));
+                if (posts.length === 0) throw new Error('レスが見つかりませんでした。');
+                
+                const title = doc.querySelector('h1[class*="truncate"]')?.title || 'タイトル不明';
+                const category = doc.querySelector('div[class*="bg-primary"]')?.textContent.trim() || 'カテゴリ不明';
+                const maxResText = doc.querySelector('svg[class*="lucide-message-circle"] + span')?.textContent.trim() || 'レス数不明';
+                const resCount = `${posts.length}/${maxResText.split('/')[1] || '???'}`;
+                
+                const firstPostTime = posts[0]?.querySelector('.flex.items-start.justify-between.mb-3 > div > span:last-of-type')?.textContent.trim() || '作成日時不明';
+                const lastPostTime = posts[posts.length - 1]?.querySelector('.flex.items-start.justify-between.mb-3 > div > span:last-of-type')?.textContent.trim() || '更新日時不明';
+
+                const thumbnail = doc.querySelector('div.p-4 > div[class*="mb-4"] img[class*="cursor-pointer"]');
+                const thumbnailUrl = thumbnail ? thumbnail.src : '';
+
+                let postsHtml = '';
+                posts.forEach(post => {
+                    const postNumber = post.querySelector('.flex.items-start.justify-between.mb-3 button')?.textContent.trim() || '?';
+                    const name = post.querySelector('span[class*="text-blue-700"]')?.textContent.trim() || '名無し';
+                    const time = post.querySelector('.flex.items-start.justify-between.mb-3 > div > span:last-of-type')?.textContent.trim() || '';
+                    const ninjin = post.querySelector('svg[stroke="currentColor"][fill="currentColor"] + span')?.textContent.trim() || '0';
+                    const bodyHtml = generateBodyHtml(post);
+
+                    let postFooterHtml = '';
+                    const receivedHere = post.querySelectorAll('.flex.flex-wrap.gap-1.mb-4 .cursor-pointer');
+                    if(receivedHere.length > 0) {
+                        const froms = Array.from(receivedHere).map(span => `&gt;&gt;${span.textContent.replace('>>','')}`).join(', ');
+                        postFooterHtml += `<div class="post-footer">(from: ${froms})</div>`;
+                    }
+                    
+                    postsHtml += `
+                        <div class="post" id="post-${postNumber}">
+                            <div class="post-header">
+                                <span class="post-number">${postNumber}.</span> <span class="post-name">${name}</span> <span>${time}</span> <span class="ninjin">[にんじん: ${ninjin}]</span>
+                            </div>
+                            <div class="post-body">${bodyHtml}</div>
+                            ${postFooterHtml}
+                        </div>
+                    `;
+                });
+                
+                const finalHtml = `<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>${title}</title>
+    <style>
+        :root {
+            --bg-color: #f1f5f9; --text-color: #1e293b; --card-bg: #ffffff; --card-border: #e2e8f0;
+            --header-bg: #e0f2fe; --header-border: #bae6fd; --header-text: #075985;
+            --meta-text: #475569; --post-header-text: #64748b; --post-header-border: #f1f5f9;
+            --post-number-text: #0f172a; --post-name-text: #2563eb; --anchor-text: #2563eb;
+            --ninjin-text: #dc2626; --footer-text: #64748b;
+            --dice-normal-bg: #eef2ff; --dice-normal-border: #c7d2fe; --dice-normal-text: #4338ca;
+            --dice-uma-bg: #fef2f2; --dice-uma-border: #fecaca; --dice-uma-text: #991b1b;
+            --dice-race-bg: #ecfeff; --dice-race-border: #a5f3fc; --dice-race-text: #0e7490;
+            --cushion-bg: #fefce8; --cushion-border: #fde047; --cushion-btn-text: #854d0e;
+        }
+        html.dark-theme {
+            --bg-color: #1e293b; --text-color: #e2e8f0; --card-bg: #334155; --card-border: #475569;
+            --header-bg: #374151; --header-border: #4b5563; --header-text: #e5e7eb;
+            --meta-text: #94a3b8; --post-header-text: #94a3b8; --post-header-border: #475569;
+            --post-number-text: #f8fafc; --post-name-text: #93c5fd; --anchor-text: #93c5fd;
+            --ninjin-text: #f87171; --footer-text: #94a3b8;
+            --dice-normal-bg: #312e81; --dice-normal-border: #4338ca; --dice-normal-text: #c7d2fe;
+            --dice-uma-bg: #991b1b; --dice-uma-border: #dc2626; --dice-uma-text: #fecaca;
+            --dice-race-bg: #164e63; --dice-race-border: #0891b2; --dice-race-text: #a5f3fc;
+            --cushion-bg: #422006; --cushion-border: #713f12; --cushion-btn-text: #fde047;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.7; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 1rem; }
+        .theme-toggle { position: fixed; top: 10px; right: 10px; padding: 5px 10px; background-color: var(--card-bg); border: 1px solid var(--card-border); border-radius: 5px; cursor: pointer; z-index: 100; }
+        .thread-container { max-width: 800px; margin: 40px auto; }
+        .thread-header { background-color: var(--header-bg); border: 1px solid var(--header-border); color: var(--header-text); padding: 1rem; border-radius: 0.25rem; margin-bottom: 1.5rem; }
+        .thread-header h2 { margin: 0 0 0.5rem 0; font-size: 1.5rem; }
+        .thread-meta { font-size: 0.875rem; color: var(--meta-text); }
+        .thread-meta span { margin-right: 1.25rem; }
+        .thumbnail-container img { max-width: 250px; height: auto; border-radius: 0.25rem; margin-top: 1rem; border: 1px solid var(--card-border); }
+        .post { background-color: var(--card-bg); border: 1px solid var(--card-border); padding: 1rem; margin-bottom: 1rem; border-radius: 0.25rem; }
+        .post-header { font-size: 0.875rem; color: var(--post-header-text); border-bottom: 1px solid var(--post-header-border); padding-bottom: 0.5rem; margin-bottom: 0.75rem; display: flex; flex-wrap: wrap; gap: 0 0.75rem; align-items: center; }
+        .post-header .post-number { font-weight: bold; color: var(--post-number-text); }
+        .post-header .post-name { font-weight: 500; color: var(--post-name-text); }
+        .post-header .ninjin { color: var(--ninjin-text); margin-left: auto; font-size: 0.8rem; }
+        .post-body { white-space: pre-wrap; word-wrap: break-word; font-size: 1rem; }
+        .post-body .post-image img { max-width: 300px; height: auto; border-radius: 5px; margin-top: 5px; }
+        .post-body a { color: var(--anchor-text); text-decoration: none; }
+        .post-body a:hover { text-decoration: underline; }
+        .post-footer { margin-top: 1rem; font-size: 0.8rem; color: var(--footer-text); }
+        .dice { display: inline-block; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-family: monospace; border: 1px solid; margin: 0.125rem 0; }
+        .dice-normal { background-color: var(--dice-normal-bg); border-color: var(--dice-normal-border); color: var(--dice-normal-text); }
+        .dice-uma { background-color: var(--dice-uma-bg); border-color: var(--dice-uma-border); color: var(--dice-uma-text); }
+        .dice-race { background-color: var(--dice-race-bg); border-color: var(--dice-race-border); color: var(--dice-race-text); }
+        .cushion { border: 1px solid var(--cushion-border); background-color: var(--cushion-bg); padding: 0.75rem; margin: 0.5rem 0; border-radius: 0.25rem; }
+        summary.cushion-btn { cursor: pointer; color: var(--cushion-btn-text); font-weight: bold; }
+        details[open] > summary.cushion-btn { margin-bottom: 0.75rem; }
+        .cushion-content { padding-top: 0.75rem; border-top: 1px dashed var(--cushion-border); }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()">テーマ切替</button>
+    <div class="thread-container">
+        <div class="thread-header">
+            <h2>${title}</h2>
+            <div class="thread-meta">
+                <span>カテゴリ: ${category}</span>
+                <span>レス数: ${resCount}</span>
+            </div>
+            <div class="thread-meta">
+                <span>作成: ${firstPostTime}</span>
+                <span>更新: ${lastPostTime}</span>
+            </div>
+            ${thumbnailUrl ? `<div class="thumbnail-container"><img src="${thumbnailUrl}" alt="スレッドサムネイル"></div>` : ''}
+        </div>
+        ${postsHtml}
+    </div>
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.classList.toggle('dark-theme');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        }
+        (function() {
+            const theme = localStorage.getItem('theme');
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark-theme');
+            }
+        })();
+    <\/script>
+</body></html>`;
+
+                previewArea.style.display = 'block';
+                previewContent.innerHTML = finalHtml;
+                downloadBtn.href = 'data:text/html;charset=utf-8,' + encodeURIComponent(finalHtml);
+                updateStatus(`解析が完了しました。${posts.length}件のレスを抽出しました。`, 'success');
+
+            } catch (error) {
+                console.error(error);
+                updateStatus(`解析に失敗しました: ${error.message}`, 'error');
+            }
+        }
+    </script>
+</body>
+</html>
