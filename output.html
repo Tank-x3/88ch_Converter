@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>【オリウマ・ダイス】聴こえないウマ娘、考える【壁打ち】</title>
+    <style>
+        :root {
+            --bg-color: #f1f5f9; --text-color: #1e293b; --card-bg: #ffffff; --card-border: #e2e8f0;
+            --header-bg: #e0f2fe; --header-border: #bae6fd; --header-text: #075985;
+            --meta-text: #475569; --post-header-text: #64748b; --post-header-border: #f1f5f9;
+            --post-number-text: #0f172a; --post-name-text: #2563eb; --anchor-text: #2563eb;
+            --ninjin-text: #dc2626; --footer-text: #64748b;
+            --dice-normal-bg: #eef2ff; --dice-normal-border: #c7d2fe; --dice-normal-text: #4338ca;
+            --dice-uma-bg: #fef2f2; --dice-uma-border: #fecaca; --dice-uma-text: #991b1b;
+            --dice-race-bg: #ecfeff; --dice-race-border: #a5f3fc; --dice-race-text: #0e7490;
+            --cushion-bg: #fefce8; --cushion-border: #fde047; --cushion-btn-text: #854d0e;
+        }
+        html.dark-theme {
+            --bg-color: #1e293b; --text-color: #e2e8f0; --card-bg: #334155; --card-border: #475569;
+            --header-bg: #374151; --header-border: #4b5563; --header-text: #e5e7eb;
+            --meta-text: #94a3b8; --post-header-text: #94a3b8; --post-header-border: #475569;
+            --post-number-text: #f8fafc; --post-name-text: #93c5fd; --anchor-text: #93c5fd;
+            --ninjin-text: #f87171; --footer-text: #94a3b8;
+            --dice-normal-bg: #312e81; --dice-normal-border: #4338ca; --dice-normal-text: #c7d2fe;
+            --dice-uma-bg: #991b1b; --dice-uma-border: #dc2626; --dice-uma-text: #fecaca;
+            --dice-race-bg: #164e63; --dice-race-border: #0891b2; --dice-race-text: #a5f3fc;
+            --cushion-bg: #422006; --cushion-border: #713f12; --cushion-btn-text: #fde047;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.7; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 1rem; }
+        .theme-toggle { position: fixed; top: 10px; right: 10px; padding: 5px 10px; background-color: var(--card-bg); border: 1px solid var(--card-border); border-radius: 5px; cursor: pointer; z-index: 100; }
+        .thread-container { max-width: 800px; margin: 40px auto; }
+        .thread-header { background-color: var(--header-bg); border: 1px solid var(--header-border); color: var(--header-text); padding: 1rem; border-radius: 0.25rem; margin-bottom: 1.5rem; }
+        .thread-header h2 { margin: 0 0 0.5rem 0; font-size: 1.5rem; }
+        .thread-meta { font-size: 0.875rem; color: var(--meta-text); }
+        .thread-meta span { margin-right: 1.25rem; }
+        .thumbnail-container img { max-width: 250px; height: auto; border-radius: 0.25rem; margin-top: 1rem; border: 1px solid var(--card-border); }
+        .post { background-color: var(--card-bg); border: 1px solid var(--card-border); padding: 1rem; margin-bottom: 1rem; border-radius: 0.25rem; }
+        .post-header { font-size: 0.875rem; color: var(--post-header-text); border-bottom: 1px solid var(--post-header-border); padding-bottom: 0.5rem; margin-bottom: 0.75rem; display: flex; flex-wrap: wrap; gap: 0 0.75rem; align-items: center; }
+        .post-header .post-number { font-weight: bold; color: var(--post-number-text); }
+        .post-header .post-name { font-weight: 500; color: var(--post-name-text); }
+        .post-header .ninjin { color: var(--ninjin-text); margin-left: auto; font-size: 0.8rem; }
+        .post-body { white-space: pre-wrap; word-wrap: break-word; font-size: 1rem; }
+        .post-body .post-image img { max-width: 300px; height: auto; border-radius: 5px; margin-top: 5px; }
+        .post-body a { color: var(--anchor-text); text-decoration: none; }
+        .post-body a:hover { text-decoration: underline; }
+        .post-footer { margin-top: 1rem; font-size: 0.8rem; color: var(--footer-text); }
+        .dice { display: inline-block; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-family: monospace; border: 1px solid; margin: 0.125rem 0; }
+        .dice-normal { background-color: var(--dice-normal-bg); border-color: var(--dice-normal-border); color: var(--dice-normal-text); }
+        .dice-uma { background-color: var(--dice-uma-bg); border-color: var(--dice-uma-border); color: var(--dice-uma-text); }
+        .dice-race { background-color: var(--dice-race-bg); border-color: var(--dice-race-border); color: var(--dice-race-text); }
+        .cushion { border: 1px solid var(--cushion-border); background-color: var(--cushion-bg); padding: 0.75rem; margin: 0.5rem 0; border-radius: 0.25rem; }
+        summary.cushion-btn { cursor: pointer; color: var(--cushion-btn-text); font-weight: bold; }
+        details[open] > summary.cushion-btn { margin-bottom: 0.75rem; }
+        .cushion-content { padding-top: 0.75rem; border-top: 1px dashed var(--cushion-border); }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()">テーマ切替</button>
+    <div class="thread-container">
+        <div class="thread-header">
+            <h2>【オリウマ・ダイス】聴こえないウマ娘、考える【壁打ち】</h2>
+            <div class="thread-meta">
+                <span>カテゴリ: ウマ娘</span>
+                <span>レス数: 122/ 500レス</span>
+            </div>
+            <div class="thread-meta">
+                <span>作成: 2025/08/23 00:26:07</span>
+                <span>更新: 2025/09/20 17:11:17</span>
+            </div>
+            <div class="thumbnail-container"><img src="file:///C:/u_temp/88/%E3%80%90%E3%82%AA%E3%83%AA%E3%82%A6%E3%83%9E%E3%83%BB%E3%83%80%E3%82%A4%E3%82%B9%E3%80%91%E8%81%B4%E3%81%93%E3%81%88%E3%81%AA%E3%81%84%E3%82%A6%E3%83%9E%E5%A8%98%E3%80%81%E8%80%83%E3%81%88%E3%82%8B%E3%80%90%E5%A3%81%E6%89%93%E3%81%A1%E3%80%91%20-%20%E3%82%A6%E3%83%9E%E5%A8%98%20_%2088ch_files/umamusume.png" alt="スレッドサムネイル"></div>
+        </div>
+        
+                        <div class="post" id="post-1">
+                            <div class="post-header">
+                                <span class="post-number">1.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/23 00:26:07</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">商店街のことも落ち着いたことだし、また色々やっていきたいところっすね。
+んー、何か話のネタになりそうなことはあったっすかねぇ？</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-2">
+                            <div class="post-header">
+                                <span class="post-number">2.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/23 00:28:02</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body"><span class="dice dice-normal">🎲 dice1d5= 4</span> 
+1-2. ダイワスカーレット
+3-5. スマートファルコン</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-3">
+                            <div class="post-header">
+                                <span class="post-number">3.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/23 02:11:12</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body"><span class="dice dice-normal">🎲 dice1d4= 3</span> 
+1. トレーニング
+2. ライブのレッスン
+3. オフにお出かけ
+4. ゲリラライブに遭遇！</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-4">
+                            <div class="post-header">
+                                <span class="post-number">4.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/23 03:30:53</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body"><span class="dice dice-normal">🎲 dice1d7= 1</span> 
+1. ゲーセン
+2-4. 服屋
+5-7. カラオケ</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-5">
+                            <div class="post-header">
+                                <span class="post-number">5.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/23 03:35:36</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">//この間ターボに5曲勝負全敗した記憶が……
+
+『タンクちゃん、一緒にゲームセンター行かない？』
+おっと、ファル子先輩からお誘いっすね。……うーん、ゲーセンかぁ……
+（多い方）<span class="dice dice-normal">🎲 dice5d3=3 2 2 1 3(11)</span> 
+1-2. ちょっといろいろあったんで今日は見学オンリーでいいっすか…？
+3. こうなったらファル子先輩の動きからなにか掴めないかやってみるっす！！</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-6">
+                            <div class="post-header">
+                                <span class="post-number">6.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/23 03:43:07</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">dice1s100=
+大きいほど「そっか…じゃあ、今日は見て覚える、感じてもらう日だね☆」
+小さいと「うーん、でもそういうときこそいっぱいチャレンジしてみるのがいいんじゃないかな？」</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-7">
+                            <div class="post-header">
+                                <span class="post-number">7.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/23 03:43:55</span> <span class="ninjin">[にんじん: 1]</span>
+                            </div>
+                            <div class="post-body">//dがsになってるとかなーにやってるんすかね……
+<span class="dice dice-normal">🎲 dice1d100= 23</span>  </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-8">
+                            <div class="post-header">
+                                <span class="post-number">8.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/23 11:58:16</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body"><span class="dice dice-normal">🎲 dice3d100=78 70 72(220)</span> </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-9">
+                            <div class="post-header">
+                                <span class="post-number">9.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/23 19:00:09</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">//頭回ってないなこれ……アウトプットできねぇ……
+//まああれこれダイス転がしながら考えてるうちにエンジンかかってくるタイプではあるのだけど</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-10">
+                            <div class="post-header">
+                                <span class="post-number">10.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/23 19:54:18</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body"><span class="dice dice-normal">🎲 dice5d131=18 34 100 6 84(242)</span> </div>
+                            <div class="post-footer">(from: &gt;&gt;17)</div>
+                        </div>
+                    
+                        <div class="post" id="post-11">
+                            <div class="post-header">
+                                <span class="post-number">11.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/23 19:58:21</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">//あれ？使う画像間違えてるな？？？まあ破綻する出目じゃないから今回はいいか……
+シンボリルドルフ,ヒシアマ姐さん,カルストンライトオ,マチカネフクキタル,ナリタトップロード
+</div>
+                            <div class="post-footer">(from: &gt;&gt;15)</div>
+                        </div>
+                    
+                        <div class="post" id="post-12">
+                            <div class="post-header">
+                                <span class="post-number">12.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/23 21:48:49</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">ああそうだ、今のうちに喫茶店でおまかせ注文入った時のシミュレーションしとくのはアリかもしれないっす。
+
+食べ物<span class="dice dice-normal">🎲 dice3d10=7 9 7(23)</span> </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-13">
+                            <div class="post-header">
+                                <span class="post-number">13.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/23 22:22:12</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">「完璧な出来のまろやか寿司」……いきなりマトモすぎてイジリ所のないのが出てきたっすね……
+これだと無理にまろやかにネタ見出すことも無さそうっすよねぇ。
+これだと練習にならないし、もういっちょ
+食べ物<span class="dice dice-normal">🎲 dice3d10=7 3 1(11)</span> </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-14">
+                            <div class="post-header">
+                                <span class="post-number">14.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/23 22:27:43</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">「完璧な出来の刺激的野菜炒め」、うーんまたもや完璧。
+強いて言えば「刺激的」ってとこはポイントっすけど……これはむしろ食べる人の食リポ要素な気がするっすね……</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-15">
+                            <div class="post-header">
+                                <span class="post-number">15.</span> <span class="post-name">匿名の774さん</span> <span>2025/08/24 01:53:23</span> <span class="ninjin">[にんじん: 1]</span>
+                            </div>
+                            <div class="post-body"><a href="#post-11" class="anchor-sent">>>11</a>
+最新版です、お収めください。
+
+
+（というかノーリーズンまでの育成ウマ娘ダイス表って結構古いですね？）<p class="external-link"><a href="https://bbs.animanch.com/board/5499762/" target="_blank" rel="noopener noreferrer">[リンク] 【ウマ娘】ダイス表作りました【アドマイヤグルーヴ追加】｜あにまん掲示板</a></p></div>
+                            <div class="post-footer">(from: &gt;&gt;16)</div>
+                        </div>
+                    
+                        <div class="post" id="post-16">
+                            <div class="post-header">
+                                <span class="post-number">16.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/24 02:56:57</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body"><a href="#post-15" class="anchor-sent">>>15</a>
+//うぉう、ありがとうございます……！
+//まあその、全部の育成ウマ娘/サポートカード引いてるわけじゃないので……キャラ表更新したところで描写できなければ意味がないと言いますか……（にしても古すぎるのは確かですが）
+//d131だと発表済・未実装含めたキャラ表じゃなかったかな……たぶんどっかには入ってるはずなんだけど……それにしても最新じゃないはずだし（）</div>
+                            <div class="post-footer">(from: &gt;&gt;17)</div>
+                        </div>
+                    
+                        <div class="post" id="post-17">
+                            <div class="post-header">
+                                <span class="post-number">17.</span> <span class="post-name">匿名の774さん</span> <span>2025/08/24 03:21:18</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body"><a href="#post-16" class="anchor-sent">>>16</a>
+22日のぱかライブTVでアドマイヤグルーヴが来てモンジューを除く実名ウマ娘が132人になったので、それまでの全ウマ娘版が1d131ですね。
+ちなみに全ウマ娘版と育成ウマ娘版とでは並び方がガラッと変わります。全ウマ娘版だと<a href="#post-10" class="anchor-sent">>>10</a>のダイス結果はエアグルーヴ、イナリワン、サムソンビッグ、オグリキャップ、デアリングタクトになります。</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-18">
+                            <div class="post-header">
+                                <span class="post-number">18.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/24 11:37:49</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">飲み物<span class="dice dice-normal">🎲 dice3d10=1 10 6(17)</span> </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-19">
+                            <div class="post-header">
+                                <span class="post-number">19.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/24 11:39:01</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">「特殊効果つき神が笑ったカフェ・ラテ」
+
+<span class="dice dice-normal">🎲 dice1d8= 8</span> 
+1　接種した対象が七色に輝き出す
+2　トレーニング効果+50%
+3　やる気が『絶好調』になる
+4　やる気が『絶不調』になる
+5　１日だけ幼児になる
+6　めっちゃ酔ったような気分になる
+7　滅茶苦茶眠くなる
+8　近くにいる人（レス直上の人）が何故かとても愛おしく見える</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-20">
+                            <div class="post-header">
+                                <span class="post-number">20.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/24 11:57:59</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">……あくまで「これが出たらどうするか？」のシミュレーションっすから！実際は飲んでないから！セーフで！！
+というか、特殊効果は飲んで初めて発揮されるんすから決まるのはお客さんサイドのタイミングっすよね…</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-21">
+                            <div class="post-header">
+                                <span class="post-number">21.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/24 14:18:37</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">スイーツ……多分色んな意味で一番難易度高いのはこっちじゃないかって気はしてるんすよね…
+<span class="dice dice-normal">🎲 dice3d10=3 5 7(15)</span> </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-22">
+                            <div class="post-header">
+                                <span class="post-number">22.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/24 14:19:18</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">しまったこっち<span class="dice dice-normal">🎲 dice3d6=1 2 4(7)</span>  じゃないっすか……</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-23">
+                            <div class="post-header">
+                                <span class="post-number">23.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/24 14:23:02</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">"「カップル用♡」と書かれたにがにがパフェ"……？
+出どころは一体……
+<span class="dice dice-normal">🎲 dice2d4=3 2(5)</span> 
+1. コーヒー
+2. 超濃い抹茶
+3. ビターチョコ
+4. 焦がし強めのカラメル</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-24">
+                            <div class="post-header">
+                                <span class="post-number">24.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/24 22:17:55</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">和パフェってもちょいと限度ってものがあるんじゃないっすかね？
+バランス悪すぎっすよ……
+
+飲み物<span class="dice dice-normal">🎲 dice3d10=5 10 4(19)</span> </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-25">
+                            <div class="post-header">
+                                <span class="post-number">25.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/24 22:21:07</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">"すごく大盛りの神が笑った出し汁"……いやそんななみなみと出し汁出てきてどうしろっていうんすか。
+お持ち帰りして自炊にでも使ってみるんすか？
+あとなんか某闘病エッセイマンガで「絶食中でも飲み物OKのときに出汁飲んでた」ってのは見たことあるっすけど、まあ流石にそんな人が喫茶店には来ないっすからね……</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-26">
+                            <div class="post-header">
+                                <span class="post-number">26.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/24 23:36:28</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">……なんかこう、意外と、って言うとちょっとマスターに失礼かもしれないっすけど、リアクション考えるのって結構アリかもしれないっすね？
+誰それとこんな事があった、とか書くよりずっとパッと出てくるっす。まあ「反応に困るなぁ…」って思うときもあるけど、それ自体がリアクションだし。
+ちょっともうしばらくこの調子でウェイトレスの練習してみるのが良さそうっすね。
+
+食べ物<span class="dice dice-normal">🎲 dice3d10=10 9 6(25)</span> </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-27">
+                            <div class="post-header">
+                                <span class="post-number">27.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/24 23:40:20</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">"猫が作ったまろやかラーメン"……「猫が作った」に目をつぶれば大分普通っすねぇ。
+これはどっちかって言うと本人？登場のほうが面白いパターンっすよねぇ多分。
+もうちょい自分が持ってくときのリアクションがしやすいパターンが出てこないもんすか？
+飲み物<span class="dice dice-normal">🎲 dice3d10=3 8 3(14)</span> </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-28">
+                            <div class="post-header">
+                                <span class="post-number">28.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/24 23:44:29</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">おぉう、"爆発しそうなダークマターコーラ"……
+爆発しそう度<span class="dice dice-normal">🎲 dice1d100= 77</span> </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-29">
+                            <div class="post-header">
+                                <span class="post-number">29.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/25 08:10:22</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">飲み物<span class="dice dice-normal">🎲 dice3d10=2 7 6(15)</span> </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-30">
+                            <div class="post-header">
+                                <span class="post-number">30.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/25 18:42:58</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">"フルーツドカのせした激甘カフェ・ラテ"……まあ、取り皿出せばなんとか？</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-31">
+                            <div class="post-header">
+                                <span class="post-number">31.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/25 22:16:52</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">お店の方で見事に大当たりなパターン引いてる人いてちょっとふふってなったっすね。
+ネタにしづらいといえばそれはそうだけど、そんな平和な時間があってもいいじゃない、ってことで。</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-32">
+                            <div class="post-header">
+                                <span class="post-number">32.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/26 11:24:38</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">おっと保守</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-33">
+                            <div class="post-header">
+                                <span class="post-number">33.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/26 18:06:07</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">食べ物<span class="dice dice-normal">🎲 dice3d10=8 3 1(12)</span> </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-34">
+                            <div class="post-header">
+                                <span class="post-number">34.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/26 18:08:30</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">"クレッシェンドール習作刺激的野菜炒め"
+ふむ、これもなんというか普通っすね……スパイス効いてそうな雰囲気はあるっすけど。</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-35">
+                            <div class="post-header">
+                                <span class="post-number">35.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/27 01:26:49</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">飲み物<span class="dice dice-normal">🎲 dice3d10=4 5 8(17)</span> </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-36">
+                            <div class="post-header">
+                                <span class="post-number">36.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/27 10:07:05</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">"スッキリとした味わいの激苦カレー"……？いやそれ絶対スパイスの配分盛大に間違えてるやつっすよね？？</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-37">
+                            <div class="post-header">
+                                <span class="post-number">37.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/27 20:11:11</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">飲み物<span class="dice dice-normal">🎲 dice3d10=6 6 9(21)</span> </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-38">
+                            <div class="post-header">
+                                <span class="post-number">38.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/28 01:19:02</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">"アイデアが浮かびそうなフロートオン酒"……酒！？
+いやまあ成人相手に出すなら「アイデアが浮かびそうな」のはいいかもしれないっすけど！
+なんというかこう、改めて色々と変なお店っすよねぇ……</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-39">
+                            <div class="post-header">
+                                <span class="post-number">39.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/28 12:12:13</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">食べ物<span class="dice dice-normal">🎲 dice3d10=8 7 3(18)</span> </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-40">
+                            <div class="post-header">
+                                <span class="post-number">40.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/28 23:43:26</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">"クレッシェンドール習作激甘そば"……！？
+なんすかそばつゆに砂糖かみりんでも入れすぎちゃったんすか？
+
+味見してみた<span class="dice dice-normal">🎲 dice1d100= 43</span> </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-41">
+                            <div class="post-header">
+                                <span class="post-number">41.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/28 23:44:42</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">……あれ？まあ甘すぎるのはそうだけどそこまでヒドイってわけでもないっすね……
+ちょっとしたうっかりミスくらいの話かな？</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-42">
+                            <div class="post-header">
+                                <span class="post-number">42.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/29 08:09:49</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">食べ物<span class="dice dice-normal">🎲 dice3d10=6 8 9(23)</span> </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-43">
+                            <div class="post-header">
+                                <span class="post-number">43.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/29 17:44:24</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">"何かを閃きそうな ダークマター 焼きそば"……？
+なんというか色々と大丈夫っすかこれ？
+危険度  <span class="dice dice-normal">🎲 dice1d100= 42</span>  </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-44">
+                            <div class="post-header">
+                                <span class="post-number">44.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/29 22:39:16</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">絶対安全には程遠いけどめちゃくちゃ危険ってほどでもない…？まあ、慎重に扱うに越したことはなさそうっすね……
+
+飲み物<span class="dice dice-normal">🎲 dice3d10=2 1 1(4)</span> </div>
+                            <div class="post-footer">(from: &gt;&gt;65)</div>
+                        </div>
+                    
+                        <div class="post" id="post-45">
+                            <div class="post-header">
+                                <span class="post-number">45.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/29 22:42:37</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">「フルーツドカのせした バチバチ弾ける コーヒー」
+炭酸（？）コーヒーでフルーツドカのせは情報過多なんすよもう。ダークマターに比べたらなんてことないかもしれないっすけど。
+
+スイーツ<span class="dice dice-normal">🎲 dice3d6=5 5 6(16)</span> </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-46">
+                            <div class="post-header">
+                                <span class="post-number">46.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/29 22:43:50</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">「天使が微笑む うまうま シュークリーム」
+おー、これは大当たりっすね。こういうの引けるお客さんはほんと超ラッキーって感じっすよね、お店覗いてると……</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-47">
+                            <div class="post-header">
+                                <span class="post-number">47.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/30 01:53:50</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">ちょっと料理の練習でも余裕のありそうなときにやらせてもらうってのもありかもしれないっすねぇ
+<span class="dice dice-normal">🎲 dice3d6=1 5 3(9)</span> </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-48">
+                            <div class="post-header">
+                                <span class="post-number">48.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/30 01:55:36</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">「超本気の(+25) ちょっと間違えた味の(-5) 洋食(23)」
+うーん……やっぱり洋食はどうもうまくいかないっすねぇ……全力出しても平凡レベルにちょっと届かない……</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-49">
+                            <div class="post-header">
+                                <span class="post-number">49.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/30 11:39:57</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body"><span class="dice dice-normal">🎲 dice3d6=1 3 3(7)</span>  </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-50">
+                            <div class="post-header">
+                                <span class="post-number">50.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/30 11:41:16</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">「超本気の(+25) 悪くない味付けの(+5) 洋食(23)」
+なんとか及第点？いやいや、いちいちこんなに気合い入れてたら保たないっすよねたぶん。</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-51">
+                            <div class="post-header">
+                                <span class="post-number">51.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/30 19:55:52</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">飲み物 <span class="dice dice-normal">🎲 dice3d10=10 9 2(21)</span>  </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-52">
+                            <div class="post-header">
+                                <span class="post-number">52.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/30 19:58:01</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">「猫が作った 超濃厚な 牛乳」
+案外被るもんなんすよねこういうの。3つ全部いっしょは1000分の1だけどどれか一つは10分の1なわけだし。</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-53">
+                            <div class="post-header">
+                                <span class="post-number">53.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/31 01:17:40</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">食べ物 <span class="dice dice-normal">🎲 dice3d10=4 8 7(19)</span>  </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-54">
+                            <div class="post-header">
+                                <span class="post-number">54.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/31 01:20:59</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">「生臭い ダークマター 寿司」……こーれはまた悲惨なのが出てきちゃったっすね……
+生臭さ(高い方＋固定値） <span class="dice dice-normal">🎲 dice2d100=33 63(96)</span>  +30
+ダークマター危険度(高い方)<span class="dice dice-normal">🎲 dice2d100=95 19(114)</span> </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-55">
+                            <div class="post-header">
+                                <span class="post-number">55.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/31 12:13:39</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">飲み物<span class="dice dice-normal">🎲 dice3d10=8 5 6(19)</span> </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-56">
+                            <div class="post-header">
+                                <span class="post-number">56.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/08/31 22:01:27</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">「ホープライトコード特製 激苦 カフェ・ラテ」 
+いやいや、なんというかこう、もっとラテ感強めでお願いしたいところなんすけど！？
+というかコーヒーの方も強すぎないっすか！？</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-57">
+                            <div class="post-header">
+                                <span class="post-number">57.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/01 07:38:39</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">スイーツ<span class="dice dice-normal">🎲 dice3d6=4 2 1(7)</span> </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-58">
+                            <div class="post-header">
+                                <span class="post-number">58.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/01 07:41:54</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">「フルーツドカのせの にがにが ケーキ」
+まーたにがにがスイーツっすか？
+今度は何が出どころっすか？
+<span class="dice dice-normal">🎲 dice1d5= 4</span> 
+1. コーヒー
+2. 超濃い抹茶
+3. ビターチョコ
+4. 焦がし過ぎのカラメル
+5. 生地焦げちゃった……</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-59">
+                            <div class="post-header">
+                                <span class="post-number">59.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/01 17:17:32</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">ありゃ。それはまた惜しいやつっすねー、そこさえいい感じにまとまってたら完璧だったやつじゃないっすか。</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-60">
+                            <div class="post-header">
+                                <span class="post-number">60.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/02 01:23:18</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body"><span class="dice dice-normal">🎲 dice3d6=3 3 4(10)</span>  </div>
+                            <div class="post-footer">(from: &gt;&gt;61)</div>
+                        </div>
+                    
+                        <div class="post" id="post-61">
+                            <div class="post-header">
+                                <span class="post-number">61.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/02 01:24:24</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body"><a href="#post-60" class="anchor-sent">>>60</a>
+「ちょっと頑張った(+5) 悪くない味付けの(+5) 中華(51)」＝61
+（ふんす）
+</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-62">
+                            <div class="post-header">
+                                <span class="post-number">62.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/02 08:06:31</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body"><span class="dice dice-normal">🎲 dice3d6=6 1 3(10)</span>  </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-63">
+                            <div class="post-header">
+                                <span class="post-number">63.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/02 18:13:50</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">「やらかした(-15) 完璧な味付けの(+15) 洋食(23)」
+あー…………</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-64">
+                            <div class="post-header">
+                                <span class="post-number">64.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/03 02:07:30</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">飲み物<span class="dice dice-normal">🎲 dice3d10=2 1 1(4)</span> </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-65">
+                            <div class="post-header">
+                                <span class="post-number">65.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/03 02:13:15</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body"><a href="#post-44" class="anchor-sent">>>44</a>
+「フルーツドカのせした バチバチ弾ける コーヒー」
+なーんでこの短期間で同じの引いてるんすかねぇ？
+0.1%ってそんな出るもんだったっすかねえ……</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-66">
+                            <div class="post-header">
+                                <span class="post-number">66.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/03 09:05:10</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">食べ物<span class="dice dice-normal">🎲 dice3d10=4 9 7(20)</span> </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-67">
+                            <div class="post-header">
+                                <span class="post-number">67.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/03 16:04:09</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">「生臭い まろやか 寿司」
+臭みがなければ普通に美味しいお寿司なんすけどねぇ……実に惜しいっす</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-68">
+                            <div class="post-header">
+                                <span class="post-number">68.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/03 23:09:35</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">飲み物<span class="dice dice-normal">🎲 dice3d10=4 5 5(14)</span> </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-69">
+                            <div class="post-header">
+                                <span class="post-number">69.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/04 01:39:28</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">「スッキリとした味わいの 激苦 ジュース」
+それ絶対あれっすよね、罰ゲーム用のナントカジュース。いやほんとどっから仕入れてるんすかねこういうのは？</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-70">
+                            <div class="post-header">
+                                <span class="post-number">70.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/04 12:45:46</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">食べ物<span class="dice dice-normal">🎲 dice3d10=1 3 7(11)</span> </div>
+                            <div class="post-footer">(from: &gt;&gt;71)</div>
+                        </div>
+                    
+                        <div class="post" id="post-71">
+                            <div class="post-header">
+                                <span class="post-number">71.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/04 19:56:59</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body"><a href="#post-70" class="anchor-sent">>>70</a>
+「特殊効果つき 刺激的 寿司」……？
+なんかお寿司も出やすいっすねぇ。
+
+<span class="dice dice-normal">🎲 dice1d8= 4</span> 
+1　接種した対象が七色に輝き出す
+2　トレーニング効果+50%
+3　やる気が『絶好調』になる
+4　やる気が『絶不調』になる
+5　１日だけ幼児になる
+6　めっちゃ酔ったような気分になる
+7　滅茶苦茶眠くなる
+8　近くにいる人（レス直上の人）が何故かとても愛おしく見える</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-72">
+                            <div class="post-header">
+                                <span class="post-number">72.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/04 23:57:38</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">……よし、今回もシミュレーションだから実際は食べてないってことで。うん。
+飲み物<span class="dice dice-normal">🎲 dice3d10=1 5 8(14)</span> </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-73">
+                            <div class="post-header">
+                                <span class="post-number">73.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/04 23:58:25</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">「特殊効果つき 激苦 カレー」
+また激苦カレーでまた特殊効果つきじゃないっすか！
+
+<span class="dice dice-normal">🎲 dice1d8= 7</span> 
+1　接種した対象が七色に輝き出す
+2　トレーニング効果+50%
+3　やる気が『絶好調』になる
+4　やる気が『絶不調』になる
+5　１日だけ幼児になる
+6　めっちゃ酔ったような気分になる
+7　滅茶苦茶眠くなる
+8　近くにいる人（レス直上の人）が何故かとても愛おしく見える</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-74">
+                            <div class="post-header">
+                                <span class="post-number">74.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/05 09:16:05</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body"><span class="dice dice-normal">🎲 dice3d6=4 4 2(10)</span>  </div>
+                            <div class="post-footer">(from: &gt;&gt;75)</div>
+                        </div>
+                    
+                        <div class="post" id="post-75">
+                            <div class="post-header">
+                                <span class="post-number">75.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/05 19:53:40</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body"><a href="#post-74" class="anchor-sent">>>74</a>
+「ごくふつうの(+0) 無難な味付けの(+0) 和食(33)」
+うーん……やっぱりトレーナーさんには敵わないっすねぇ……ああいう繊細な包丁さばきも味付けも飾りじゃなくてちゃんと最終的なデキに効いてくるのがよーく分かるっす。</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-76">
+                            <div class="post-header">
+                                <span class="post-number">76.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/06 01:21:27</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">食べ物<span class="dice dice-normal">🎲 dice3d10=8 1 9(18)</span> </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-77">
+                            <div class="post-header">
+                                <span class="post-number">77.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/06 01:22:33</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">「クレッシェンドール習作 激マズ 焼きそば」
+……おぉう。ここまでどストレートなやつは初めて出たっすね……ま、まぁ、習作だし…？</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-78">
+                            <div class="post-header">
+                                <span class="post-number">78.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/06 11:46:55</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">食べ物<span class="dice dice-normal">🎲 dice3d10=4 6 7(17)</span>  </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-79">
+                            <div class="post-header">
+                                <span class="post-number">79.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/06 14:01:45</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">「生臭い ニンニクマシマシ 寿司」
+いやほんと改めてこのおまかせメニューヤバいっすね……ある意味当たり前なのはわかっててもいざこういうのが出てくると普通にドン引きっすよ……</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-80">
+                            <div class="post-header">
+                                <span class="post-number">80.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/07 00:28:53</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">飲み物<span class="dice dice-normal">🎲 dice3d10=3 7 2(12)</span> </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-81">
+                            <div class="post-header">
+                                <span class="post-number">81.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/07 00:30:43</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">「爆発しそうな 激甘 牛乳」
+こうやって何度もやってると思った以上に10分の1って大したことないんだなって実感するっすねぇ……
+爆発しそう度/危険度 <span class="dice dice-normal">🎲 dice2d100=70 72(142)</span> </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-82">
+                            <div class="post-header">
+                                <span class="post-number">82.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/07 04:46:53</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">スイーツ <span class="dice dice-normal">🎲 dice3d6=6 5 1(12)</span>  </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-83">
+                            <div class="post-header">
+                                <span class="post-number">83.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/07 12:15:14</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">「死神が笑った うまうま ケーキ」
+おいしそうだけど不穏な一言もついてるんすけど！？これ大丈夫なやつっすか！？
+危険度 <span class="dice dice-normal">🎲 dice1d100= 59</span>  </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-84">
+                            <div class="post-header">
+                                <span class="post-number">84.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/07 22:45:00</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">普通にそこそこ危ないやつじゃないっすか！ほんっとに油断ならないっすねこのメニューは……
+
+タンクの料理 <span class="dice dice-normal">🎲 dice3d6=6 3 3(12)</span>  </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-85">
+                            <div class="post-header">
+                                <span class="post-number">85.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/07 22:46:12</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">「やらかした(-15) 悪くない味付けの(+5) 洋食(23)」=13
+……とかなんとか言ってたらだいぶエライことになっちゃったっすね……</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-86">
+                            <div class="post-header">
+                                <span class="post-number">86.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/08 08:58:51</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">飲み物<span class="dice dice-normal">🎲 dice3d10=10 3 4(17)</span> </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-87">
+                            <div class="post-header">
+                                <span class="post-number">87.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/08 16:27:14</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">「猫が作った 激辛 出し汁」
+まーたクセ強なのが出てきたっすね……まあ自分は辛いのは好きだから困りはしないっすけど。</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-88">
+                            <div class="post-header">
+                                <span class="post-number">88.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/08 23:03:35</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">食べ物<span class="dice dice-normal">🎲 dice3d10=8 4 9(21)</span> </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-89">
+                            <div class="post-header">
+                                <span class="post-number">89.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/09 08:52:06</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">「クレッシェンドール習作 二郎系 焼きそば」
+じ、二郎系焼きそば……？なんというかいろんな意味で重たそう……</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-90">
+                            <div class="post-header">
+                                <span class="post-number">90.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/09 18:15:49</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">飲み物 <span class="dice dice-normal">🎲 dice3d10=9 3 1(13)</span>  </div>
+                            <div class="post-footer">(from: &gt;&gt;91)</div>
+                        </div>
+                    
+                        <div class="post" id="post-91">
+                            <div class="post-header">
+                                <span class="post-number">91.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/10 01:35:00</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body"><a href="#post-90" class="anchor-sent">>>90</a>
+「いい香りがする 激辛 コーヒー」
+うわ、また激辛コーヒーっすか！？（商店街シナリオじゃない方のお年玉争奪戦罰ゲームの記憶）
+……あー、一応今回は謎の臭いはしないというか、普通に香りはいいんすね……？
+いやまあコーヒーが激辛って時点でどうやってもおかしいんすけど…
+
+うーん、コーヒーは正直苦手なんすけど辛いのは大好きっすからねぇ……
+(50から遠い方)<span class="dice dice-normal">🎲 dice2d100=81 88(169)</span> </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-92">
+                            <div class="post-header">
+                                <span class="post-number">92.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/10 08:15:36</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">……あれ？なんか意外と悪くない……？というかこれは普通にアリ……？</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-93">
+                            <div class="post-header">
+                                <span class="post-number">93.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/10 18:27:23</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">タンクの料理 <span class="dice dice-normal">🎲 dice3d6=6 3 1(10)</span>  </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-94">
+                            <div class="post-header">
+                                <span class="post-number">94.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/10 22:34:44</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">「やらかした(-15) 悪くない味付けの(+5) お菓子(59)」=49
+（何やらかした？ギリギリ及第点かどうか、くらいではあるから大惨事でもないけど）
+<span class="dice dice-normal">🎲 dice1d8= 6</span> 
+1-5. ちょっと考え事してて焦がしちゃった……
+6. 生地混ぜすぎ/混ぜなさすぎ
+7-8. 牛乳のつもりで豆乳入れちゃった……イマイチ合わない……</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-95">
+                            <div class="post-header">
+                                <span class="post-number">95.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/11 02:05:21</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">ありゃ、なんとなく違和感はあったんすけど案の定やらかしてたっすね……
+まあ、それでもギリギリなんとかなってるからいいかな……</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-96">
+                            <div class="post-header">
+                                <span class="post-number">96.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/11 11:31:12</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">食べ物<span class="dice dice-normal">🎲 dice3d10=6 9 7(22)</span> </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-97">
+                            <div class="post-header">
+                                <span class="post-number">97.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/11 19:45:27</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">「何かを閃きそうな まろやか 寿司」
+ほんとにお寿司がよく出てくるっすねぇ。
+レース中に頭が冴えてキレのいい走りになれば最高っすけどね？</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-98">
+                            <div class="post-header">
+                                <span class="post-number">98.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/12 01:00:48</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">どうにも勝てないっすねぇ……心折れるようなひどさじゃないし、「次こそは…！」とは思えてるんすけどねぇ。
+</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-99">
+                            <div class="post-header">
+                                <span class="post-number">99.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/12 07:47:56</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">飲み物<span class="dice dice-normal">🎲 dice3d10=6 6 7(19)</span> </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-100">
+                            <div class="post-header">
+                                <span class="post-number">100.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/12 16:42:50</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">「アイデアが浮かびそうな フロートオン ソーダ」
+ふむふむ、これはなかなかいい感じっすね！なにか考えたい事はあったっすかねーっと……</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-101">
+                            <div class="post-header">
+                                <span class="post-number">101.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/13 01:50:19</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">んー、時々暇つぶしがてら色々試してるAIチャットでなにかトレーナーさんの手間を減らすツールとか作れないっすかね？なにかやれそうなことがないかヒアリングしてみるのがいいかもしれないっす。</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-102">
+                            <div class="post-header">
+                                <span class="post-number">102.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/13 12:55:13</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">食べ物<span class="dice dice-normal">🎲 dice3d10=7 5 4(16)</span> </div>
+                            <div class="post-footer">(from: &gt;&gt;106)</div>
+                        </div>
+                    
+                        <div class="post" id="post-103">
+                            <div class="post-header">
+                                <span class="post-number">103.</span> <span class="post-name">タンクの人 ◆VUJkd2VK</span> <span>2025/09/13 22:21:34</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">//ブレーカーが壊れるなんてことある…？？しかもよりによって連休初日に……
+//とりあえず保守</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-104">
+                            <div class="post-header">
+                                <span class="post-number">104.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/14 10:37:40</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">保守</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-105">
+                            <div class="post-header">
+                                <span class="post-number">105.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/14 13:56:29</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">ちょっとわけあってネカフェに来てるんすけど、たまに来るとやっぱり色々とすごいっすね。
+何より自前のパソコンとはとても比べられないようなハイスペックPCが動いてるのってやっぱりなんか感動するっすよ。
+なんてことないひとつひとつの動作の差がわかっちゃうというか……地味なようで大きいんだなって実感するっす……
+それに、モニターだって寮に置けないような大画面だし。動画見るだけでも快適っす。
+やっぱりあれっすね、今回はちょっとわけあって来てるっすけど、頻繁に来ない方がいいっす。これに慣れると寮で自前のパソコン使うのが嫌になっちゃいそう……</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-106">
+                            <div class="post-header">
+                                <span class="post-number">106.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/14 23:07:49</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body"><a href="#post-102" class="anchor-sent">>>102</a>
+「完璧な出来の 激苦 うどん」
+いやいやいやいや……せっかくの出来を全力で潰しに行っちゃってるじゃないっすかもったいない……
+山菜かなんか入れすぎたか罰ゲーム仕様っすか？</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-107">
+                            <div class="post-header">
+                                <span class="post-number">107.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/15 03:03:45</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">飲み物<span class="dice dice-normal">🎲 dice3d10=1 5 6(12)</span> </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-108">
+                            <div class="post-header">
+                                <span class="post-number">108.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/15 11:31:23</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">「特殊効果つき 激苦 カフェ・ラテ」
+おぉう、これはだいぶ強烈っすね……その上特殊効果つきっすか？
+
+<span class="dice dice-normal">🎲 dice1d8= 4</span> 
+1　接種した対象が七色に輝き出す
+2　トレーニング効果+50%
+3　やる気が『絶好調』になる
+4　やる気が『絶不調』になる
+5　１日だけ幼児になる
+6　めっちゃ酔ったような気分になる
+7　滅茶苦茶眠くなる
+8　近くにいる人（レス直上の人）が何故かとても愛おしく見える</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-109">
+                            <div class="post-header">
+                                <span class="post-number">109.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/15 18:07:47</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">……飲んでない、飲んでないっすから！イメトレイメトレ…！
+まったくもう、ほんとに油断出来ないんすから。</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-110">
+                            <div class="post-header">
+                                <span class="post-number">110.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/16 00:43:16</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">食べ物<span class="dice dice-normal">🎲 dice3d10=8 8 4(20)</span> </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-111">
+                            <div class="post-header">
+                                <span class="post-number">111.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/16 10:51:37</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">「クレッシェンドール習作 ダークマター うどん」
+危険度 <span class="dice dice-normal">🎲 dice1d100= 79</span>  </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-112">
+                            <div class="post-header">
+                                <span class="post-number">112.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/16 17:18:52</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">飲み物<span class="dice dice-normal">🎲 dice3d10=7 8 9(24)</span> </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-113">
+                            <div class="post-header">
+                                <span class="post-number">113.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/17 02:01:19</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">「完璧な出来の ダークマター 酒」
+連続ダークマターじゃないっすか！完璧な出来がどっか行っちゃってるんすよ！</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-114">
+                            <div class="post-header">
+                                <span class="post-number">114.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/17 12:38:39</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">食べ物<span class="dice dice-normal">🎲 dice3d10=5 9 7(21)</span> </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-115">
+                            <div class="post-header">
+                                <span class="post-number">115.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/17 22:19:37</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">「すごく大盛りの まろやか 寿司」
+量が多い以外は何も問題ないっすね。ここしばらく突っ込みどころしかないメニューばっかりだったからようやくこういうの出てきてちょっとホッとしたっすよ。
+いつもこうだと心穏やかでいられるんすけどねー。</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-116">
+                            <div class="post-header">
+                                <span class="post-number">116.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/18 01:50:54</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">タンクの料理<span class="dice dice-normal">🎲 dice3d6=6 6 1(13)</span>  </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-117">
+                            <div class="post-header">
+                                <span class="post-number">117.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/18 11:47:37</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">//あっ……
+「やらかした(-15) 大惨事な(-10) お菓子(59)」
+ぎゃー、なんすかこれ！！
+色々やらかして慌ててたらますます散々なことになっちゃったっすよ……</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-118">
+                            <div class="post-header">
+                                <span class="post-number">118.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/18 21:49:06</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">//ダメだこういう内容はいまいち思いつかない……
+
+飲み物<span class="dice dice-normal">🎲 dice3d10=5 1 5(11)</span> </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-119">
+                            <div class="post-header">
+                                <span class="post-number">119.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/19 08:07:12</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">「すごく大盛りの バチバチ弾ける ジュース」
+強炭酸っすかね？ごくマトモなのが出てきたっすね。こういうのでいいんすよこういうので。</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-120">
+                            <div class="post-header">
+                                <span class="post-number">120.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/19 19:32:35</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">食べ物<span class="dice dice-normal">🎲 dice3d10=2 7 8(17)</span> </div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-121">
+                            <div class="post-header">
+                                <span class="post-number">121.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/20 05:00:08</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body">「破壊力のある 激甘 にんじんハンバーグ」</div>
+                            
+                        </div>
+                    
+                        <div class="post" id="post-122">
+                            <div class="post-header">
+                                <span class="post-number">122.</span> <span class="post-name">タンクx3 ◆VUJkd2VK</span> <span>2025/09/20 17:11:17</span> <span class="ninjin">[にんじん: 0]</span>
+                            </div>
+                            <div class="post-body"><span class="dice dice-normal">🎲 dice3d6=3 4 3(10)</span>  </div>
+                            
+                        </div>
+                    
+    </div>
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.classList.toggle('dark-theme');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        }
+        (function() {
+            const theme = localStorage.getItem('theme');
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark-theme');
+            }
+        })();
+    </script>
+</body></html>
